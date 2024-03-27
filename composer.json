@@ -1,0 +1,31 @@
+{
+    "name": "notabenedev/price-export-yml",
+    "description": "Export groups & price to YML",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "N.Borisova",
+            "email": "n.borisova@me.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "ext-simplexml": "*",
+        "ext-libxml": "*",
+        "portedcheese/base-settings": "@dev",
+        "portedcheese/site-group-price": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Notabenedev\\PriceExportYml\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Notabenedev\\PriceExportYml\\PriceExportYmlServiceProvider"
+            ]
+        }
+    }
+}
