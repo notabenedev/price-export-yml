@@ -13,8 +13,8 @@
     "require": {
         "ext-simplexml": "*",
         "ext-libxml": "*",
-        "portedcheese/base-settings": "@dev",
-        "portedcheese/site-group-price": "@dev"
+        "portedcheese/base-settings": "^3.0|^4.0",
+        "portedcheese/site-group-price": "^0.0.9"
     },
     "autoload": {
         "psr-4": {
