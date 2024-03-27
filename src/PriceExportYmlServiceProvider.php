@@ -4,7 +4,7 @@ namespace Notabenedev\PriceExportYml;
 
 use Illuminate\Support\ServiceProvider;
 
-class ProductExportYmlServiceProvider extends ServiceProvider
+class PriceExportYmlServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
