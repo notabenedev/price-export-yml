@@ -14,7 +14,7 @@
         "ext-simplexml": "*",
         "ext-libxml": "*",
         "portedcheese/base-settings": "^3.0|^4.0",
-        "notabenedev/site-group-price": "^0.0.10"
+        "notabenedev/site-group-price": "^0.0.9 | ^0.1.0"
     },
     "autoload": {
         "psr-4": {
