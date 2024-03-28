@@ -6,6 +6,7 @@ use App\Group;
 use App\Http\Controllers\Controller;
 use App\Price;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 
 class PriceExportYmlController extends Controller
@@ -48,32 +49,32 @@ class PriceExportYmlController extends Controller
             $prices = Price::query();
             $prices->chunk(100, function ($prices) use ($offersYml) {
                 foreach ($prices as $price) {
-                    // first image
-                    $imageRoute =  class_exists(\App\ImageFilter::class) ? 'image-filter' : 'imagecache';
-                    $imageSrc = $price->image ? route($imageRoute, ['template' => 'original', 'filename' => $price->image->file_name]) : null;
-                    // description
-                    $description =
-                        (config("price-export-yml.stripTags", true) ?
-                            htmlspecialchars(strip_tags($price->description),ENT_XML1) :
-                            (! empty($price->description) ? '<![CDATA[ '.htmlspecialchars($price->description, ENT_XML1).' ]]>' : '' )
-                        );
+                    $priceYml = floatval($price->price);
+                    if ($priceYml) {
+                        // first image
+                        $imageRoute =  class_exists(\App\ImageFilter::class) ? 'image-filter' : 'imagecache';
+                        $imageSrc = $price->image ? route($imageRoute, ['template' => 'original', 'filename' => $price->image->file_name]) : null;
+                        // description
+                        $description =
+                            (config("price-export-yml.stripTags", true) ?
+                                htmlspecialchars(strip_tags($price->description),ENT_XML1) :
+                                (! empty($price->description) ? '<![CDATA[ '.htmlspecialchars($price->description, ENT_XML1).' ]]>' : '' )
+                            );
 
-                    // generate xml
-                    $offerYml = $offersYml->addChild("offer");
-                    $offerYml->addAttribute("id", $price->id);
-                    $offerYml->addChild("name", htmlspecialchars($price->title));
-                    $offerYml->addChild("url", route("site.groups.show", ["group" => $price->group->slug]).'#'.$price->slug);
-                    try{
-                        $priceYml = floatval($price->price);
-                    } catch (\Exception $e){
-                        $priceYml = 0;
+                        // generate xml
+                        $offerYml = $offersYml->addChild("offer");
+                        $offerYml->addAttribute("id", $price->id);
+                        $offerYml->addChild("name", htmlspecialchars($price->title));
+                        $offerYml->addChild("url", route("site.groups.show", ["group" => $price->group->slug]).'#'.$price->slug);
+
+                        $offerYml->addChild("price", $priceYml);
+                        $offerYml->addChild("currencyId", "RUR");
+                        $offerYml->addChild("categoryId", $price->group_id);
+                        $offerYml->addChild("description", $description);
+                        if ($imageSrc)
+                            $offerYml->addChild("picture", "$imageSrc");
                     }
-                    $offerYml->addChild("price", $priceYml);
-                    $offerYml->addChild("currencyId", "RUR");
-                    $offerYml->addChild("categoryId", $price->group_id);
-                    $offerYml->addChild("description", $description);
-                    if ($imageSrc)
-                        $offerYml->addChild("picture", "$imageSrc");
+
                 }
             });
             return $file->asXML();
